@@ -58,14 +58,18 @@ class Scanner {
 public:
   Scanner(std::ifstream &yaml_in);
   void scan();
+  void visualize(std::ofstream &pgm_out);
   void write(std::ofstream &msg_out) const;
+  bool is_correct() const;
 
 private:
-  float32 get_range(float32 angle) const;
+  float32 angle_normalize(float32 angle) const;
+  uint32  get_cell_position(float32 angle, float32 range) const;
+  float32 get_range(float32 angle);
   float32 dist_to_cell(float32 angle, ScannerDirection direction,
                      int32 row, int32 col) const;
 
-
+  bool correct_;
   RosLaserScanData parameters_;
   RosPoint position_;
   RosMapMetaData info_;
