@@ -1,0 +1,7 @@
+grid: map.msg
+angle_min: -10.00
+angle_max: 10.00
+angle_increment: 0.001
+range_min: 20.0
+range_max: 120.0
+position: [100.0, 50.0]

@@ -3,17 +3,18 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 const float32 PI = 3.14159265;
 
 RosLaserScanData::RosLaserScanData() {
   angle_min = 0.0;
   angle_max = 2 * PI;
-  angle_increment = 0.01;
+  angle_increment = 0.001;
   time_increment = 0.0;
   scan_time = 0.0;
   range_min = 0.0;
-  range_max = 1e9;
+  range_max = -1.0;
 }
   
 RosMapMetaData::RosMapMetaData() {
@@ -22,7 +23,7 @@ RosMapMetaData::RosMapMetaData() {
   resolution = 1.0;
   width = 0;
   height = 0;
-  position = {0, 0, 0};
+  position = {0.0, 0.0, 0.0};
   orient_x = orient_y = orient_z = orient_w = 0.0;
 }
 
@@ -61,7 +62,8 @@ Scanner::Scanner(std::ifstream &yaml_in) {
     std::cerr << "incorrect angle paramemers" << std::endl;
   }
   else if (parameters_.range_min < 0.0 ||
-           parameters_.range_max < parameters_.range_min) {
+           (parameters_.range_max < parameters_.range_min &&
+            parameters_.range_max != -1.0)) {
     std::cerr << "incorrect range paramemers" << std::endl;  
   }
   else if (!grid_in) {
@@ -108,12 +110,14 @@ float32 Scanner::get_range(float32 angle) {
     float32 dist = dist_to_cell(angle, direction, row, col);
     if (data_[row * info_.width + col] > 0)
       return dist;
-    else if (parameters_.range_min <= dist && dist <= parameters_.range_max)
+    else if (data_[row * info_.width + col] == -1)
+      return -1.0;
+    else if (parameters_.range_min <= dist &&
+             (dist <= parameters_.range_max || parameters_.range_max < 0.0))
       data_[row * info_.width + col] = -2;
     if (angle < PI / 2) {
       float32 tmp = atan2((row + 1) * info_.resolution - position_.y, 
                         (col + 1) * info_.resolution - position_.x);
-      tmp = angle_normalize(tmp);
       if (angle < tmp) {
         col++;
         direction = RIGHT;
@@ -201,10 +205,13 @@ void Scanner::scan() {
     float32 scan_angle = angle;
     scan_angle = angle_normalize(scan_angle);
     ranges_.push_back(get_range(scan_angle));
-    if (ranges_.back() > parameters_.range_max ||
+    if ((ranges_.back() > parameters_.range_max &&
+         parameters_.range_max > 0.0) ||
         ranges_.back() < parameters_.range_min)
       ranges_.back() = -1.0;
   }
+  if (parameters_.range_max < 0.0)
+    parameters_.range_max = *std::max_element(ranges_.begin(), ranges_.end());
 }
 
 void Scanner::write(std::ofstream &msg_out) const {
@@ -228,8 +235,10 @@ void Scanner::visualize(std::ofstream &pgm_out) {
   for (int8 cell : data_) {
     if (cell > 0)
       pgm_out.put(0);
-    else if (cell > -2)
+    else if (cell == 0)
       pgm_out.put(255);
+    else if (cell == -1)
+      pgm_out.put(204);
     else
       pgm_out.put(100);
   }

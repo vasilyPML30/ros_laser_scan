@@ -30,19 +30,19 @@ int main(int argc, char **argv) {
         return 1;
       }
     }
-    else if (argv[i] == std::string("-f")) {
+    else if (argv[i] == std::string("-h")) {
       std::cout << "-i file_name  (oblig.) input file name (.yaml)" << std::endl;
       std::cout << "-o file_name  (oblig.) output file name (.msg)" << std::endl;
       std::cout << "-v file_name  (opt.)   visual file name (.pgm)" << std::endl;
       return 0;
     }
     else {
-      std::cout << "wrong arguments (-f for help)" << std::endl;
+      std::cout << "wrong arguments (-h for help)" << std::endl;
       return 1;
     }
   }
   if (!in_file || !out_file) {
-    std::cout << "wrong arguments (-f for help)" << std::endl;
+    std::cout << "wrong arguments (-h for help)" << std::endl;
     return 1;
   }
   Scanner scanner(in_file);
