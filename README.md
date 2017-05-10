@@ -70,17 +70,16 @@ position: [0.0, 0.0]
 Файлы "scan1.msg" и "visual1.pgm" были получены выполнением в директории example команд:
 
 ```
-cd example
-../scanner -i example/params1.yaml -o example/scan1.msg -v example/visual1.pgm
+../scanner -i params1.yaml -o scan1.msg -v visual1.pgm
 
 ```
 Файлы "scan2.msg" и "visual2.pgm" были получены выполнением в директории example команд:
 
 ```
-./scanner -i example/params2.yaml -o example/scan2.msg -v example/visual2.pgm
+./scanner -i params2.yaml -o scan2.msg -v visual2.pgm
 ```
 
-Также в example есть изображение (example.pgm), показывающее как выглядело окружение до сканирования.
+Также в example есть изображение (sample.pgm), показывающее как выглядело окружение до сканирования.
 
 Алгоритм сканирования
 ---------------------
