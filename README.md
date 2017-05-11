@@ -76,7 +76,7 @@ position: [0.0, 0.0]
 Файлы "scan2.msg" и "visual2.pgm" были получены выполнением в директории example команд:
 
 ```
-./scanner -i params2.yaml -o scan2.msg -v visual2.pgm
+../scanner -i params2.yaml -o scan2.msg -v visual2.pgm
 ```
 
 Также в example есть изображение (sample.pgm), показывающее как выглядело окружение до сканирования.
